@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 file = "AAPL/income_statement.csv"
+
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 loader = CSVLoader(file_path='file')
 index_creator = VectorstoreIndexCreator()
