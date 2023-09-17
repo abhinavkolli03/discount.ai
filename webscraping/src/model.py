@@ -4,10 +4,14 @@ import requests
 from openpyxl import Workbook, load_workbook
 from openpyxl.utils import get_column_letter
 from flask import Flask, send_file, jsonify
+from flask_cors import CORS
 import boto3
 from botocore.exceptions import NoCredentialsError
+import pandas as pd
+import os
 
 app = Flask(__name__)
+CORS(app, resources={r"/download*": {"origins": "http://localhost:3000"}})
 
 
 def generate_excel(ticker):
@@ -17,12 +21,18 @@ def generate_excel(ticker):
     market_rate = 0.10
     long_term_growth_rate = 0.02
 
-    incomeStatement = pd.read_csv(
-        f'/Users/anishpalakurthi/discount.ai/webscraping/src/{ticker}/income_statement.csv').iloc[::-1]
-    cashFlowState = pd.read_csv(
-        f'/Users/anishpalakurthi/discount.ai/webscraping/src/{ticker}/cash_flow.csv').iloc[::-1]
-    balanceSheet = pd.read_csv(
-        f'/Users/anishpalakurthi/discount.ai/webscraping/src/{ticker}/balance_sheet.csv').iloc[::-1]
+    base_path = f'./src/{ticker}'
+    absolute_base_path = f'./src'
+    income_statement_path = os.path.join(base_path, 'income_statement.csv')
+    cash_flow_path = os.path.join(base_path, 'cash_flow.csv')
+    balance_sheet_path = os.path.join(base_path, 'balance_sheet.csv')
+
+    # Read the CSV files
+    incomeStatement = pd.read_csv(income_statement_path).iloc[::-1]
+    cashFlowState = pd.read_csv(cash_flow_path).iloc[::-1]
+    balanceSheet = pd.read_csv(balance_sheet_path).iloc[::-1]
+
+    template_sheet_path = os.path.join(absolute_base_path, 'template.xlsx')
 
     # variables
     revenue_growth = incomeStatement["revenue"].pct_change().mean()
@@ -188,8 +198,7 @@ def generate_excel(ticker):
 
     transposed_data = historical_data.transpose()
 
-    wb = load_workbook(
-        "/Users/anishpalakurthi/discount.ai/webscraping/src/template.xlsx")
+    wb = load_workbook(template_sheet_path)
     ws = wb.active  # or ws = wb['SheetName']
 
     starting_row = 4
@@ -248,7 +257,7 @@ def download(ticker):
         # Generate a presigned URL for the uploaded S3 object
         response = s3.generate_presigned_url('get_object',
                                              Params={'Bucket': 'discount.ai-storage',
-                                                     'Key': f"create_{ticker}_Populated_template.xlsx"},
+                                                     'Key': f"create_{ticker.upper()}_Populated_template.xlsx"},
                                              ExpiresIn=3600)
     except NoCredentialsError:
         return jsonify(error="Credentials not available"), 400
@@ -258,4 +267,4 @@ def download(ticker):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False, port=5000)

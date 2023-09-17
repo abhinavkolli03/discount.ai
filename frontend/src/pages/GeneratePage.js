@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const GeneratePage = () => {
     const [ticker, setTicker] = useState('');
     const [status, setStatus] = useState('Enter a stock ticker to create a DCF');
     const [processing, setProcessing] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [downloadURL, setDownloadURL] = useState('');
+    const [showAnalyze, setShowAnalyze] = useState(false);
 
     //fetch endpoint for later
     useEffect(() => {
         if (loading) {
             const fetchData = async () => {
                 try {
+                    const fetchURL = `http://127.0.0.1:5000/download${ticker.toLowerCase()}`;
                     // Sending ticker to Flask backend
-                    const response = await axios.post('http://localhost:5000/process', { ticker: ticker });
+                    const response = await axios.get(fetchURL);
                     const data = response.data;
-                    setStatus(data.result);
+                    console.log(response)
+                    if (data.result) {
+                        setStatus(data.result);
+                    } else if (data.url) {
+                        setDownloadURL(data.url);
+                        console.log(downloadURL)
+                        setStatus('Data is ready! Click below to download.');
+                    }
                     setLoading(false);
                 } catch (error) {
                     console.log('fail')
@@ -86,6 +97,32 @@ const GeneratePage = () => {
             <div className="w-full max-w-lg h-64 bg-white bg-opacity-50 rounded-lg flex items-center justify-center">
                 <p className="text-center text-lg">{status}</p>
             </div>
+            <div className="flex space-x-5 mt-5">
+                {downloadURL && (
+                    <a 
+                        href={downloadURL}
+                        download
+                        onClick={() => setShowAnalyze(true)}
+                        className={`bg-green-500 hover:bg-green-700 text-white p-3 rounded flex items-center space-x-2 transition-transform duration-500 transform ${showAnalyze ? 'translate-x-[-100px]' : ''}`}
+                        >
+                        Save Data
+                    </a>
+                )}
+                {showAnalyze && (
+                    <button
+                    className={`bg-cyan-800 hover:bg-sky-600 text-white p-3 rounded flex items-center space-x-2 transition-transform duration-500 transform ${showAnalyze ? 'translate-x-[+100px]' : ''}`}
+                    >
+                        <Link 
+                            to="/analyze"
+                        >
+                            <span>Analyze</span>
+                        </Link>                   
+                    </button>
+                )
+            }
+            </div>
+            <h1 className="mt-10 text-cyan-800"
+            >Simply enter a ticker, download our auto-generated DCF, and let's analyze it!</h1>
         </div>
     );
 }

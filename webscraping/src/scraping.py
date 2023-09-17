@@ -3,16 +3,16 @@ import os
 import requests
 import pandas as pd
 
-# load_dotenv()
-
-API_KEY = "2fbd1bbb1c7d1bd71122fd3d10ac4a78"
-BASE_URL = "https://financialmodelingprep.com/api/v3/"
+from dotenv import load_dotenv
 
 # retrieve financial data online
 
+API_URL = os.getenv("FMP_API_URL")
+BASE_URL = os.getenv("FMP_BASE_URL")
+
 
 def retrieveStatement(ticker, statement):
-    endpoint = f"{statement}/{ticker}?apikey={API_KEY}"
+    endpoint = f"{statement}/{ticker}?apikey={API_URL}"
     response = requests.get(BASE_URL + endpoint)
     if response.status_code == 200:
         return response.json()
@@ -31,24 +31,9 @@ def processData(profile):
 
     return data
 
-<<<<<<< HEAD
 
 ticker = "AMC"
-=======
-ticker = "META"
->>>>>>> 1fe7358e375bc0e52535e0d8b81f2b568bbf1de3
 incomeStatement = processData(retrieveStatement(ticker, "income-statement"))
 balanceSheet = processData(retrieveStatement(
     ticker, "balance-sheet-statement"))
 cashFlow = processData(retrieveStatement(ticker, "cash-flow-statement"))
-
-# ticker = "AMZN"
-# incomeStatement = processData(retrieveStatement(ticker, "income-statement"))
-# balanceSheet = processData(retrieveStatement(
-#     ticker, "balance-sheet-statement"))
-# cashFlow = processData(retrieveStatement(ticker, "cash-flow-statement"))
-
-# os.makedirs(ticker, exist_ok=True)
-# incomeStatement.to_csv(f"{ticker}/income_statement.csv", index=False)
-# balanceSheet.to_csv(f"{ticker}/balance_sheet.csv", index=False)
-# cashFlow.to_csv(f"{ticker}/cash_flow.csv", index=False)

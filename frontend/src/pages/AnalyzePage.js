@@ -1,15 +1,14 @@
-// Import required modules and components
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import DropFileInput from '../components/DropfileInput';
 import "./AnalyzePage.css";
+import axios from 'axios';
+import AWS from 'aws-sdk';
 
-// Define the AnalyzePage component
 const AnalyzePage = () => {
-  
-  // State hooks to store various pieces of data
   const [files, setFiles] = useState([]);
   const [isValidFile, setIsValidFile] = useState(false);
   const [summary, setSummary] = useState(null);
+  const textareaRef = useRef(null);
   const [userQuestions, setUserQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [botResponses, setBotResponses] = useState([]);
@@ -36,7 +35,14 @@ const AnalyzePage = () => {
     }
   }, [botResponses]);
 
-  // Function to handle file changes
+  useEffect(() => {
+    // Adjusts the height of the textarea based on scrollHeight
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [summary]);
+
   const onFileChange = (uploadedFiles) => {
     if (uploadedFiles.length > 0) {
       setIsValidFile(true);
@@ -46,12 +52,56 @@ const AnalyzePage = () => {
     setFiles(uploadedFiles);
   };
 
-  // Function to handle the submission of the file
-  const handleButtonClick = () => {
-    if (isValidFile) {
-      console.log("Submitting the file...");
+  const generatePresignedUrl = (bucket, key, expires = 3600) => {
+    const s3 = new AWS.S3({
+      region: "us-east-1",
+      accessKeyId: process.env.REACT_APP_ACCESS_KEY,
+      secretAccessKey: process.env.REACT_APP_SECRET_KEY,
+    });
 
-      const mockSummary = "Here's a mock summary of the DCF. This will be replaced with real data once you integrate with the backend.";
+    const url = s3.getSignedUrl('getObject', {
+      Bucket: bucket,
+      Key: key,
+      Expires: expires,
+    });
+
+    return url;
+  }
+
+  const uploadFile = async () => {
+    if (files.length === 0) {
+      alert("No file selected.");
+      return;
+    }
+
+    const file = files[0];
+
+    const S3_BUCKET = "discount.ai-storage";
+    const REGION = "us-east-1";
+    const ACCESS_KEY = process.env.REACT_APP_ACCESS_KEY;
+    const SECRET_KEY = process.env.REACT_APP_SECRET_KEY;
+
+    AWS.config.update({
+      accessKeyId: ACCESS_KEY,
+      secretAccessKey: SECRET_KEY,
+    });
+
+    const s3 = new AWS.S3({
+      params: { Bucket: S3_BUCKET },
+      region: REGION,
+    });
+
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: file.name,
+      Body: file,
+    };
+
+    try {
+      const presignedUrl = generatePresignedUrl(S3_BUCKET, file.name);
+      alert("Successful upload!");
+
+      const mockSummary = "Based on the inputted DCF, this valuation rests heavily in a stable topline with minimal bottom line growth. Approximately 50% is vested in terminal value. WACC is roughly 11%, contributing to a high weighted cost of capital. This translates to an amplified implied upside/downturn in returns. Please ask more questions.";
       let index = 0;
       setSummary(mockSummary[0]);
 
@@ -63,10 +113,18 @@ const AnalyzePage = () => {
           clearInterval(intervalId);
         }
       }, 50);
+
+      // Sending the presigned URL to the backend for processing and summarizing
+      //const response = await axios.post("http://127.0.0.1:5001/process_and_summarize", { url: presignedUrl });
+
+      //const summary = response.data.summary;
+      //console.log("Summary:", summary);
+
+    } catch (error) {
+      console.error("Error uploading the file:", error);
     }
   };
 
-  // Function to handle the submission of a user's question
   const handleQuestionSubmit = () => {
     if (currentQuestion.trim() !== "") {
       setUserQuestions(prevQuestions => [...prevQuestions, currentQuestion.trim()]);
@@ -78,7 +136,6 @@ const AnalyzePage = () => {
     }
   };
 
-  // The return statement describes the component's UI
   return (
     <div className="container mx-auto p-8 bg-white">
       <h1 className="text-center text-neutral-950 text-3xl mb-8">Analyze DCF</h1>
@@ -89,19 +146,28 @@ const AnalyzePage = () => {
       <div className="mt-5 text-center">
         <button 
           className={`px-6 py-3 rounded-md ${isValidFile ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500'} transition-colors`} 
-          onClick={handleButtonClick}
+          onClick={uploadFile}
           disabled={!isValidFile}
         >
-          Submit DCF
+          Upload to S3
         </button>
       </div>
       
       {summary && 
         <div className="mt-10 p-6 border-2 border-gray-300 bg-[var(--input-bg)] rounded-md">
           <h1>discount.ai summarizes...</h1>
-          <div className="typing-text">
-            {summary}
-          </div>
+          <textarea 
+            ref={textareaRef}
+            value={summary}
+            readOnly 
+            style={{ 
+              width: '100%', 
+              overflowY: 'hidden', // Hide vertical scrollbar
+              border: 'none',
+              backgroundColor: 'transparent',
+              resize: 'none', // Prevent manual resize
+            }}
+          />
         </div>
       }
 
@@ -131,5 +197,4 @@ const AnalyzePage = () => {
   );
 };
 
-// Export the AnalyzePage component
 export default AnalyzePage;
