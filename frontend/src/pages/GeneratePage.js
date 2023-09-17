@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const GeneratePage = () => {
     const [ticker, setTicker] = useState('');
@@ -6,15 +7,25 @@ const GeneratePage = () => {
     const [processing, setProcessing] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    //fetch endpoint for later
     useEffect(() => {
-        try {
-            const response = await fetch(`YOUR_BACKEND_ENDPOINT?ticker=${ticker}`);
-            setLoading(false);
-        } catch (error) {
-            setStatus('Error fetching data for this ticker. Please try again later!');
-            setLoading(false);
+        if (loading) {
+            const fetchData = async () => {
+                try {
+                    // Sending ticker to Flask backend
+                    const response = await axios.post('http://localhost:5000/process', { ticker: ticker });
+                    const data = response.data;
+                    setStatus(data.result);
+                    setLoading(false);
+                } catch (error) {
+                    console.log('fail')
+                    setStatus('Error fetching data for this ticker. Please try again later!');
+                    setLoading(false);
+                }
+            }
+            fetchData();
         }
-    }, [loading])
+    }, [loading]);
 
     const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY
 
@@ -32,7 +43,7 @@ const GeneratePage = () => {
             const response = await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${ticker}&apikey=${ALPHA_VANTAGE_API_KEY}`);
             const data = await response.json();
             if (data.bestMatches && data.bestMatches.length > 0 && data.bestMatches[0]['1. symbol'] === ticker) {
-                setStatus('Valid ticker! You can proceed.');
+                setStatus('Valid ticker! Proceeding with computation...');
             } else {
                 setStatus('Invalid ticker. Please enter an official stock ticker.');
                 setProcessing(false);

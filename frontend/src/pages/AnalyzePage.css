@@ -1,0 +1,22 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.typing-text {
+    animation: fadeInUp 0.5s ease forwards;
+    border: 2px solid gray;
+    background-color: #e5e5e5;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 10;
+}
