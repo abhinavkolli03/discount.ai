@@ -31,8 +31,12 @@ def processData(profile):
 
     return data
 
+<<<<<<< HEAD
 
 ticker = "AMC"
+=======
+ticker = "META"
+>>>>>>> 1fe7358e375bc0e52535e0d8b81f2b568bbf1de3
 incomeStatement = processData(retrieveStatement(ticker, "income-statement"))
 balanceSheet = processData(retrieveStatement(
     ticker, "balance-sheet-statement"))

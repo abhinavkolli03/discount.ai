@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -133,3 +134,7 @@ __blobstorage__
 __queuestorage__
 __azurite_db*__.json
 .python_packages
+=======
+.env
+.node_modules
+>>>>>>> 1fe7358e375bc0e52535e0d8b81f2b568bbf1de3
