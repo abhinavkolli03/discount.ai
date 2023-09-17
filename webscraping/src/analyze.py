@@ -7,9 +7,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+file = "AAPL/income_statement.csv"
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-loader = UnstructuredExcelLoader("dcf.xlsx")
-#loader = CSVLoader(file_path='AAPL/income_statement.csv')
+loader = CSVLoader(file_path='file')
 index_creator = VectorstoreIndexCreator()
 docsearch = index_creator.from_loaders([loader])
 chain = RetrievalQA.from_chain_type(llm=OpenAI(), chain_type="stuff", retriever=docsearch.vectorstore.as_retriever(), input_key="question")
