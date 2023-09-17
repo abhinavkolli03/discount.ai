@@ -2,7 +2,7 @@ from scraping import processData, retrieveStatement
 import pandas as pd
 import requests
 
-ticker = "AMZN"
+ticker = "META"
 projection_time_frame = 5
 risk_free_rate = 0.05
 market_rate = 0.10
