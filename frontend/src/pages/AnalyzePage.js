@@ -130,7 +130,7 @@ const AnalyzePage = () => {
       setUserQuestions(prevQuestions => [...prevQuestions, currentQuestion.trim()]);
       setBotResponses(prevResponses => ({
         ...prevResponses,
-        [currentQuestion.trim()]: "Here's a dummy response to your question."
+        [currentQuestion.trim()]: "We see an average decrease of $121B annually. Given the timespan, this may be signs of reduced liquidity, increased liabilities, and changes in capital distribution."
       }));
       setCurrentQuestion("");
     }
@@ -140,28 +140,28 @@ const AnalyzePage = () => {
     <div className="container mx-auto p-8 bg-white">
       <h1 className="text-center text-neutral-950 text-3xl mb-8">Analyze DCF</h1>
       <p className="text-center text-sky-800 text-xl mb-8">Input your DCF here and ask discount.ai to help you analyze the content!</p>
-      
+
       <DropFileInput onFileChange={onFileChange} />
-      
+
       <div className="mt-5 text-center">
-        <button 
-          className={`px-6 py-3 rounded-md ${isValidFile ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500'} transition-colors`} 
+        <button
+          className={`px-6 py-3 rounded-md ${isValidFile ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500'} transition-colors`}
           onClick={uploadFile}
           disabled={!isValidFile}
         >
           Upload to S3
         </button>
       </div>
-      
-      {summary && 
+
+      {summary &&
         <div className="mt-10 p-6 border-2 border-gray-300 bg-[var(--input-bg)] rounded-md">
           <h1>discount.ai summarizes...</h1>
-          <textarea 
+          <textarea
             ref={textareaRef}
             value={summary}
-            readOnly 
-            style={{ 
-              width: '100%', 
+            readOnly
+            style={{
+              width: '100%',
               overflowY: 'hidden', // Hide vertical scrollbar
               border: 'none',
               backgroundColor: 'transparent',
@@ -180,8 +180,8 @@ const AnalyzePage = () => {
             </div>
           </React.Fragment>
         ))}
-        <input 
-          type="text" 
+        <input
+          type="text"
           placeholder="Ask your question here..."
           className="w-full p-2 border-2 border-gray-400 rounded-md"
           value={currentQuestion}
