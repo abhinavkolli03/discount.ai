@@ -8,5 +8,9 @@ model.
 ## Installation
 
 ``git clone https://github.com/abhinavkolli03/discount.ai.git``
+
 ``cd webscraping/src``
+
 ``npm install``
+
+``npm run dev``
