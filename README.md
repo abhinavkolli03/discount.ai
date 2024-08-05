@@ -64,19 +64,11 @@ To run the project, you need to install the required dependencies for both the b
 2. Click on the "Generate DCF" button.
 3. The app will generate a detailed DCF model and provide a downloadable report.
 
-*Placeholder for an image or GIF showing how to generate a DCF model.*
-
-![Generate DCF Model](path/to/generate-dcf.gif)
-
 ### Interactive Analysis with LLM
 
 1. Upload your financial documents or provide a DCF model for analysis.
 2. Use the chat interface to ask questions about the company, the DCF model, and broader macroeconomic trends.
 3. The LLM will provide detailed and contextually relevant responses.
-
-*Placeholder for an image or GIF showing how to use the interactive LLM.*
-
-![Interactive LLM Analysis](path/to/interactive-llm.gif)
 
 ## Understanding Discounted Cash Flow (DCF) Models
 
