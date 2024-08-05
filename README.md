@@ -103,11 +103,3 @@ We used the Polygon API to gather financial metrics for the DCF calculations. Th
 ## Contributing
 
 We welcome contributions from the community. Please fork the repository, make your changes, and submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For more information, please contact [your email].
