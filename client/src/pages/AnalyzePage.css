@@ -1,0 +1,70 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.typing-text {
+    animation: fadeInUp 0.5s ease forwards;
+    border: 2px solid gray;
+    background-color: #e5e5e5;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.fade-in {
+    animation: fadeIn 1s forwards;
+  }
+  
+  .fade-out {
+    animation: fadeOut 1s forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+.loader {
+    border: 4px solid rgba(255, 255, 255, 0.3); 
+    border-radius: 50%;
+    border-top: 4px solid #ffffff; 
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 1s linear infinite; 
+    animation: spin 1s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+  
